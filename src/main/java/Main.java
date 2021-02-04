@@ -17,11 +17,11 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
-        String[] columnMapping = {"id", "firstName", "lastName", "country", "age"};
-        String fileName = "data.csv";
+        //String[] columnMapping = {"id", "firstName", "lastName", "country", "age"};
+        //String fileName = "data.csv";
         List<Employee> list = parseXML("data.xml");
-        //String json = listToJson(list);
-       // Type listType = new TypeToken<List<Employee>>() {}.getType();
+        String json = listToJson(list);
+        Type listType = new TypeToken<List<Employee>>() {}.getType();
     }
 
     private static List<Employee> parseXML(String fileName) throws IOException, ParserConfigurationException, SAXException {
@@ -37,13 +37,15 @@ public class Main {
                 Node node = nodeList.item(i);
                 System.out.println("Teкyщий элeмeнт: " + node.getNodeName());
                 if (Node.ELEMENT_NODE == node.getNodeType()) {
-                    Element employee = (Element) node;
-                    Employee employee1 = new Employee(employee.getAttribute(String.valueOf(Long.valueOf("id"))),
-                            employee.getAttribute("firstName"),
-                            employee.getAttribute("lastName"),
-                            employee.getAttribute("country"),
-                            employee.getAttribute("age"));
-                    list.add(employee1);
+                    Element elementEmployee = (Element) node;
+                    Employee newEmployee = new Employee(
+                            Long.parseLong(elementEmployee.getElementsByTagName("id").item(0).getTextContent()),
+                            elementEmployee.getElementsByTagName("firstName").item(0).getTextContent(),
+                            elementEmployee.getElementsByTagName("lastName").item(0).getTextContent(),
+                            elementEmployee.getElementsByTagName("country").item(0).getTextContent(),
+                            Integer.parseInt(elementEmployee.getElementsByTagName("age").item(0).getTextContent())
+                    );
+                    list.add(newEmployee);
                 }
             }
             return list;
@@ -63,7 +65,7 @@ public class Main {
     }
 
     private static void writeString(Gson gson, List<Employee> list) throws IOException {
-        FileWriter filewriter = new FileWriter("C://Users//stdd0//IdeaProjects//hw51//result.json");
+        FileWriter filewriter = new FileWriter("C://Users//stdd0//IdeaProjects//hw52//result.json");
         filewriter.write(gson.toJson(list));
         filewriter.close();
     }
